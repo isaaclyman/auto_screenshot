@@ -72,5 +72,7 @@ Future<void> runToCompletion({
     throw onException("[stdout:${result.stdout}] [stderr:${result.stderr}]");
   }
 
-  print("[stdout:${result.stdout}]");
+  if (result.stdout.toString().trim().isNotEmpty) {
+    print("[stdout:${result.stdout}]");
+  }
 }
