@@ -72,5 +72,5 @@ Future<void> runToCompletion({
     throw onException("[stdout:${result.stdout}] [stderr:${result.stderr}]");
   }
 
-  print(result.stdout);
+  print("[stdout:${result.stdout}]");
 }

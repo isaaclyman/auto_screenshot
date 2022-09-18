@@ -21,6 +21,8 @@ Future<void Function()> bootIOSSimulator(Device device) async {
     );
   }
 
+  print('[stdout:${process.stdout}] [stderr:${process.stderr}]');
+
   return () async {
     print("xcrun simctl shutdown ${device.id}");
     await Process.run("xcrun", ["simctl", "shutdown", device.id]);
@@ -28,20 +30,27 @@ Future<void Function()> bootIOSSimulator(Device device) async {
 }
 
 Future<void> captureIOSScreen(Device device, String outputPath) async {
-  print('outputPath: $outputPath');
+  final outputFile = File(outputPath);
+  final fixedOutputPath = outputFile.absolute.path.replaceAll(" ", "_");
+  print('outputPath: ${fixedOutputPath}');
+
+  final dir = Directory(path.dirname(fixedOutputPath));
+  dir.createSync(recursive: true);
 
   // xcrun simctl io booted screenshot ./screen.png
   await runToCompletion(
     process: Process.run(
-        "xcrun",
-        [
-          "simctl",
-          "io",
-          "booted",
-          "screenshot",
-          './$outputPath',
-        ],
-        workingDirectory: File(path.dirname("pubspec.yaml")).absolute.path),
+      "xcrun",
+      [
+        "simctl",
+        "io",
+        "booted",
+        "screenshot",
+        fixedOutputPath,
+        "--mask",
+        "black",
+      ],
+    ),
     onException: (data) =>
         IOSCommandException("Failed to capture screen. $data"),
   );
