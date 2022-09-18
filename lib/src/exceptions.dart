@@ -55,3 +55,43 @@ class MissingBinaryException implements Exception {
     return generateError(this, message);
   }
 }
+
+class UnsupportedDeviceException implements Exception {
+  const UnsupportedDeviceException([this.message]);
+  final String? message;
+
+  @override
+  String toString() {
+    return generateError(this, message);
+  }
+}
+
+class TestFailureException implements Exception {
+  const TestFailureException([this.message]);
+  final String? message;
+
+  @override
+  String toString() {
+    return generateError(this, message);
+  }
+}
+
+class IOSSimulatorBootException implements Exception {
+  const IOSSimulatorBootException([this.message]);
+  final String? message;
+
+  @override
+  String toString() {
+    return generateError(this, message);
+  }
+}
+
+class AndroidEmulatorBootException implements Exception {
+  const AndroidEmulatorBootException([this.message]);
+  final String? message;
+
+  @override
+  String toString() {
+    return generateError(this, message);
+  }
+}

@@ -6,6 +6,10 @@ import 'package:auto_screenshot/src/config_validate.dart';
 import 'package:auto_screenshot/src/exceptions.dart';
 
 void main() async {
+  await doValidation();
+}
+
+Future<AutoScreenshotConfig> doValidation() async {
   final config = AutoScreenshotConfig.fromPubspec();
 
   if (config == null) {
@@ -18,4 +22,6 @@ void main() async {
 
   await validateConfig(config);
   print('Configuration passes all checks.');
+
+  return config;
 }

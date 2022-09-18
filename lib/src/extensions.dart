@@ -19,3 +19,9 @@ extension TrimCharEx on String {
     return trimCharLeft(char).trimCharRight(char);
   }
 }
+
+extension QuoteEx on String {
+  String quote() {
+    return "\"${this}\"";
+  }
+}

@@ -1,3 +1,3 @@
-## 1.0.0
+## 0.0.1-dev.2
 
-- Initial version.
+- WIP. This package is not ready for general use.

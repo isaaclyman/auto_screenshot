@@ -2,9 +2,16 @@ import 'dart:io';
 
 import 'package:auto_screenshot/src/exceptions.dart';
 
-Future<ProcessResult> runTestOnDevice(
-    String testPath, String deviceIdentifier) async {
-  return Process.run("flutter", ["test", testPath, "-d", deviceIdentifier]);
+Future<void> runTestOnDevice(
+  String testPath,
+  String deviceIdentifier,
+) async {
+  final result =
+      await Process.run("flutter", ["test", testPath, "-d", deviceIdentifier]);
+  if (result.exitCode != 0) {
+    throw TestFailureException("Flutter test runner failed: ${result.stderr}");
+  }
+  print(result.stdout ?? '');
 }
 
 Future<void> assertBinariesAvailable() async {
@@ -23,6 +30,8 @@ Future<void> assertBinariesAvailable() async {
         "Couldn't find [$bin]. Check the README and make sure the necessary "
         "software is installed and added to your PATH.",
       ));
+    } else {
+      print("  [$bin] found at [${result.stdout.trim()}].");
     }
   }
 

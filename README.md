@@ -1,4 +1,4 @@
-**auto_screenshot** grabs screenshots from your Flutter app on multiple platforms (iOS and Android).
+**auto_screenshot** grabs screenshots from your Flutter app on mobile platforms (iOS and Android).
 It has two parts:
 
 1. A command-line wrapper over Flutter's integration_test package that lets you specify which
@@ -26,7 +26,7 @@ https://docs.flutter.dev/cookbook/testing/integration/introduction.
 
 ## Commands
 
-- `dart run auto_screenshot`: Starts booting up simulators, running integration tests, and collecting screenshots.
+- `dart run auto_screenshot`: Starts booting up simulators, running integration tests, and collecting screenshots. Make sure you don't have any simulators already running. auto_screenshot will start them as needed and close them when it's finished.
 - `dart run auto_screenshot:list_devices`: Lists all the valid device names you can use in the auto_screenshot configuration.
 - `dart run auto_screenshot:validate`: Validates your auto_screenshot configuration without running any tests.
 
@@ -49,20 +49,14 @@ If your integration tests are in `<project root>/integration_test` and you want 
 written to `<project root>/auto_screenshot`, that's all the configuration you need.
 
 - `devices` - (required) an array of device names. These must be exact and not contain any typos. You can get
-  a list of valid device names by running `dart run auto_screenshot:list_devices`. For iOS, this assumes you've
-  installed xcode and any simulators you want to use.
+  a list of valid device names by running `dart run auto_screenshot:list_devices`. This assumes you've already installed/created the simulators you want to use, though they shouldn't be running while you're using auto_screenshot.
 - `test_path` - (optional) path from the project root to your integration test folder OR file. Defaults to `integration_test`.
 - `output_folder` - (optional) path from the project root to the desired screenshot output folder. Defaults
   to `auto_screenshot`.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
-```
+WIP...
 
 ## Support
 

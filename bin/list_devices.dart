@@ -8,4 +8,12 @@ void main() async {
   for (var device in iosDevices) {
     print("- ${device.name}");
   }
+
+  final androidDevices = await getInstalledAndroidEmulators();
+
+  print('');
+  print('Valid Android devices:');
+  for (var device in androidDevices) {
+    print("- ${device.name}");
+  }
 }
