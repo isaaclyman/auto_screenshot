@@ -1,6 +1,6 @@
 name: auto_screenshot
 description: Grabs screenshots from your Flutter app on multiple platforms (iOS or Android)
-version: 0.0.1-dev.2
+version: 0.0.1-dev.3
 repository: https://github.com/isaaclyman/auto_screenshot
 # homepage: https://www.example.com
 

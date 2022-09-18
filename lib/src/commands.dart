@@ -1,48 +1,16 @@
 import 'dart:io';
 
+import 'package:auto_screenshot/src/config.dart';
+import 'package:auto_screenshot/src/devices.dart';
 import 'package:auto_screenshot/src/exceptions.dart';
-import "package:path/path.dart" as path;
-
-Future<void> runTestOnDevice(
-  String testPath,
-  String deviceIdentifier,
-) async {
-  final file = File(testPath);
-  final type = file.statSync().type;
-  final testFilePaths = <String>[];
-  if (type == FileSystemEntityType.file) {
-    testFilePaths.add(testPath);
-  } else {
-    final dir = Directory(testPath);
-    final files = dir.listSync(recursive: true).where(
-          (entity) =>
-              entity.statSync().type == FileSystemEntityType.file &&
-              entity.path.endsWith('.dart'),
-        );
-    testFilePaths.addAll(files.map((f) => f.path));
-  }
-
-  for (var target in testFilePaths) {
-    final result = await Process.run("flutter", [
-      "drive",
-      "--driver=test_driver/integration_test.dart",
-      "--target=$target",
-      "-d",
-      deviceIdentifier
-    ]);
-    if (result.exitCode != 0) {
-      throw TestFailureException(
-          "Flutter test runner failed: [stdout:${result.stdout}] [stderr:${result.stderr}]");
-    }
-    print('Test [${path.basename(target)}] passed.');
-  }
-}
+import 'package:path/path.dart' as path;
 
 Future<void> assertBinariesAvailable() async {
   final expectedBinaries = <String>[
     "flutter",
     "xcrun",
     "emulator",
+    "adb",
     "java",
   ];
   final errors = <Exception>[];
@@ -66,4 +34,43 @@ Future<void> assertBinariesAvailable() async {
   }
 
   return;
+}
+
+Future<void> captureScreensOnDevice(
+  AutoScreenshotConfig config,
+  Device device,
+) async {
+  final baseUrl = device.type == DeviceType.android
+      ? config.baseUrl[DeviceTypeString.android]
+      : device.type == DeviceType.iOS
+          ? config.baseUrl[DeviceTypeString.ios]
+          : null;
+  if (baseUrl == null) {
+    throw InvalidDeviceException('Invalid device: [$device]');
+  }
+
+  final outputFolder = path.join(config.outputFolder, device.name);
+  await device.loadDeepLink(baseUrl, "");
+  await Future.delayed(Duration(seconds: 8));
+  for (var capturePath in config.paths) {
+    await device.loadDeepLink(baseUrl, capturePath);
+    await Future.delayed(Duration(seconds: 1));
+    await device.captureScreen(
+      path.join(outputFolder, '${capturePath.replaceAll('/', '_')}.png'),
+    );
+  }
+
+  print('Captured ${config.paths.length} screen(s) on [$device].');
+}
+
+Future<void> runToCompletion({
+  required Future<ProcessResult> process,
+  required MessageException Function(String data) onException,
+}) async {
+  final result = await process;
+  if (result.exitCode != 0) {
+    throw onException("[stdout:${result.stdout}] [stderr:${result.stderr}]");
+  }
+
+  print(result.stdout);
 }

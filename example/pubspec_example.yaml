@@ -1,0 +1,21 @@
+auto_screenshot:
+  bundle_id:
+    android: com.example.myapp
+    ios: com.example.myapp
+  devices:
+    - iPhone 8 Plus
+    - iPhone 13 Pro Max
+    - iPad Pro (12.9-inch) (2nd generation)
+    - iPad Pro (12.9-inch) (5th generation)
+    - Pixel_3a_API_33_arm64-v8a
+    - Pixel_5_API_33
+  base_url:
+    android: http://mydomain.com
+    ios: customschema://mydomain.com
+  screenshot:
+    - home
+    - projects
+    - projects/1
+    - about
+    - about/demo
+  output_folder: auto_screenshot

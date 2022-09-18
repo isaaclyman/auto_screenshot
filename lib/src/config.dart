@@ -8,26 +8,39 @@ import 'package:checked_yaml/checked_yaml.dart' as yaml;
 
 part 'config.g.dart';
 
+class DeviceTypeString {
+  DeviceTypeString._();
+
+  static String get android => 'android';
+  static String get ios => 'ios';
+}
+
 @JsonSerializable(
   anyMap: true,
   checked: true,
   disallowUnrecognizedKeys: true,
 )
 class AutoScreenshotConfig {
+  @JsonKey(name: 'bundle_id')
+  final Map<String, String> bundleId;
+
   final List<String> devices;
 
-  @JsonKey(name: 'test_path')
-  final String testPath;
-  String get joinedTestPath => path.join(testPath);
+  @JsonKey(name: 'base_url')
+  final Map<String, String> baseUrl;
+
+  @JsonKey(name: 'screenshot')
+  final List<String> paths;
 
   @JsonKey(name: 'output_folder')
   final String outputFolder;
-  String get joinedOutputFolder => path.join(outputFolder);
 
   AutoScreenshotConfig({
     required this.devices,
-    this.testPath = "integration_test",
+    required this.baseUrl,
+    required this.paths,
     this.outputFolder = "auto_screenshot",
+    required this.bundleId,
   });
 
   factory AutoScreenshotConfig.fromJson(Map json) =>
@@ -44,7 +57,7 @@ class AutoScreenshotConfig {
     try {
       final file = File(pubspecFilePath);
       if (!file.existsSync()) {
-        return AutoScreenshotConfig(devices: []);
+        return null;
       }
 
       final contents = file.readAsStringSync();
@@ -58,7 +71,7 @@ class AutoScreenshotConfig {
         allowNull: true,
       );
     } on yaml.ParsedYamlException catch (e) {
-      throw InvalidConfigException(e.formattedMessage);
+      throw InvalidConfigException(e.formattedMessage ?? e.message);
     } catch (e) {
       rethrow;
     }

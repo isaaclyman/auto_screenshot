@@ -1,4 +1,5 @@
-import 'package:auto_screenshot/src/devices.dart';
+import 'package:auto_screenshot/src/android.dart';
+import 'package:auto_screenshot/src/ios.dart';
 
 void main() async {
   final iosDevices = await getInstalledIOSSimulators();

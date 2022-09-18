@@ -1,27 +1,13 @@
-extension TrimCharEx on String {
-  String trimCharRight(String char) {
-    if (!endsWith(char)) {
-      return this;
+extension UrlJoinEx on String {
+  String joinUrl(String other) {
+    if (endsWith('/')) {
+      return substring(0, length - 1).joinUrl(other);
     }
 
-    return substring(0, length - 1);
-  }
-
-  String trimCharLeft(String char) {
-    if (!startsWith(char)) {
-      return this;
+    if (other.startsWith('/')) {
+      return joinUrl(other.substring(1));
     }
 
-    return substring(1);
-  }
-
-  String trimChar(String char) {
-    return trimCharLeft(char).trimCharRight(char);
-  }
-}
-
-extension QuoteEx on String {
-  String quote() {
-    return "\"${this}\"";
+    return "$this/$other";
   }
 }

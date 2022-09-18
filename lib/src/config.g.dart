@@ -12,28 +12,42 @@ AutoScreenshotConfig _$AutoScreenshotConfigFromJson(Map json) => $checkedCreate(
       ($checkedConvert) {
         $checkKeys(
           json,
-          allowedKeys: const ['devices', 'test_path', 'output_folder'],
+          allowedKeys: const [
+            'bundle_id',
+            'devices',
+            'base_url',
+            'screenshot',
+            'output_folder'
+          ],
         );
         final val = AutoScreenshotConfig(
           devices: $checkedConvert('devices',
               (v) => (v as List<dynamic>).map((e) => e as String).toList()),
-          testPath: $checkedConvert(
-              'test_path', (v) => v as String? ?? "integration_test"),
+          baseUrl: $checkedConvert(
+              'base_url', (v) => Map<String, String>.from(v as Map)),
+          paths: $checkedConvert('screenshot',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
           outputFolder: $checkedConvert(
               'output_folder', (v) => v as String? ?? "auto_screenshot"),
+          bundleId: $checkedConvert(
+              'bundle_id', (v) => Map<String, String>.from(v as Map)),
         );
         return val;
       },
       fieldKeyMap: const {
-        'testPath': 'test_path',
-        'outputFolder': 'output_folder'
+        'baseUrl': 'base_url',
+        'paths': 'screenshot',
+        'outputFolder': 'output_folder',
+        'bundleId': 'bundle_id'
       },
     );
 
 Map<String, dynamic> _$AutoScreenshotConfigToJson(
         AutoScreenshotConfig instance) =>
     <String, dynamic>{
+      'bundle_id': instance.bundleId,
       'devices': instance.devices,
-      'test_path': instance.testPath,
+      'base_url': instance.baseUrl,
+      'screenshot': instance.paths,
       'output_folder': instance.outputFolder,
     };

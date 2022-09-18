@@ -1,5 +1,6 @@
+import 'package:auto_screenshot/src/android.dart';
 import 'package:auto_screenshot/src/commands.dart';
-import 'package:auto_screenshot/src/devices.dart';
+import 'package:auto_screenshot/src/ios.dart';
 
 import 'validate.dart';
 
@@ -17,11 +18,13 @@ void main() async {
 
   for (var device in selectedDevices) {
     print('###');
-    print('Booting up [${device.flutterId}:${device.name}]');
+    print('Booting up [$device]');
     await device.boot();
-    print('Running tests on [${device.flutterId}:${device.name}]');
-    await runTestOnDevice(config.testPath, device.flutterId);
-    print('Sending kill signal to [${device.flutterId}:${device.name}]');
+    print('Installing app on [$device]');
+    await device.installApp();
+    print('Capturing screens on [$device]');
+    await captureScreensOnDevice(config, device);
+    print('Sending kill signal to [$device]');
     device.stop();
     print('###');
     print('');

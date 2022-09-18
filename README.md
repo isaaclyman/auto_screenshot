@@ -1,32 +1,24 @@
-**auto_screenshot** grabs screenshots from your Flutter app on mobile platforms (iOS and Android).
-It has two parts:
+**auto_screenshot** grabs screenshots from your Flutter app on mobile platforms (iOS and Android). 
+It's a good choice for your app **if all the pages you want to screenshot are accessible by
+deep-link with no user interaction required.**
 
-1. A command-line wrapper over Flutter's integration_test package that lets you specify which
-   emulators to run on, then runs them on your machine while you make pancakes or whatever.
-2. Library methods that let you insert screenshot-taking commands into your integration tests
-   with a single line of code.
-
-Seed data is supported. If you use go_router, you can specify a test very easily.
+Seed data is supported.
 
 ## Getting started
 
 You'll need to have the following installed, with the indicated binaries available in your PATH:
 
-- Flutter - `flutter`
 - xcode (only available on MacOS) - `xcrun`
 - Simulator (comes bundled with xcode)
-- Android SDK Command-Line Tools - `emulator`
+- Android SDK Command-Line Tools - `emulator`, `adb`
 - Java - `java`
 
 To install, add `auto_screenshot` to your dev_dependencies in pubspec.yaml.
 (Run `flutter pub get` if your IDE doesn't do it for you.)
 
-If you don't have integration tests yet, follow the instructions at
-https://docs.flutter.dev/cookbook/testing/integration/introduction.
-
 ## Commands
 
-- `dart run auto_screenshot`: Starts booting up simulators, running integration tests, and collecting screenshots. Make sure you don't have any simulators already running. auto_screenshot will start them as needed and close them when it's finished.
+- `dart run auto_screenshot`: Starts booting up simulators, loading deep links, and collecting screenshots. Make sure you don't have any simulators already running; auto_screenshot will start them as needed and close them when it's finished. Make sure as well that you've built an ipa and an appbundle for your app. auto_screenshot will look for them in the standard output folders.
 - `dart run auto_screenshot:list_devices`: Lists all the valid device names you can use in the auto_screenshot configuration.
 - `dart run auto_screenshot:validate`: Validates your auto_screenshot configuration without running any tests.
 
@@ -36,6 +28,9 @@ Add a section like the following to your pubspec.yaml:
 
 ```yaml
 auto_screenshot:
+  bundle_id: 
+    android: com.example.myapp
+    ios: com.example.myapp
   devices:
     - iPhone 8 Plus
     - iPhone 13 Pro Max
@@ -43,14 +38,26 @@ auto_screenshot:
     - iPad Pro (12.9-inch) (5th generation)
     - Pixel_3a_API_33_arm64-v8a
     - Pixel_5_API_33
+  base_url:
+    android: http://flutterbooksample.com
+    ios: customschema://flutterbooksample.com
+  screenshot:
+    - home
+    - projects
+    - projects/1
+    - about
+    - about/demo
 ```
 
-If your integration tests are in `<project root>/integration_test` and you want screenshots to be
-written to `<project root>/auto_screenshot`, that's all the configuration you need.
+If you want screenshots to be written to `<project root>/auto_screenshot`, that's all the configuration you need. Make sure to run `flutter build appbundle` and `flutter run` targeting an iOS Simulator before you run the package. This will make sure the necessary files are present.
 
+All configuration fields:
+
+- `bundle_id` - (required) your app's bundle ID, like `com.{domain}.{appname}`. This should match the bundle ID your app compiles to for both iOS and Android.
 - `devices` - (required) an array of device names. These must be exact and not contain any typos. You can get
   a list of valid device names by running `dart run auto_screenshot:list_devices`. This assumes you've already installed/created the simulators you want to use, though they shouldn't be running while you're using auto_screenshot.
-- `test_path` - (optional) path from the project root to your integration test folder OR file. Defaults to `integration_test`.
+- `baseUrl` - (required) the base URL for your deep links. `android` and `iOS` fields are supported. Your app must be configured for deep linking; see https://docs.flutter.dev/development/ui/navigation/deep-linking.
+- `screenshot` - (required) the relative URL of each page you want to screenshot.
 - `output_folder` - (optional) path from the project root to the desired screenshot output folder. Defaults
   to `auto_screenshot`.
 
@@ -62,20 +69,11 @@ WIP...
 
 Issues are welcome. Please don't ask me to increase the scope of this project unless you're willing to do the work, file the PRs, and join the maintenance team. auto_screenshot is meant to run on MacOS and capture screenshots from iPhone and Android emulators (not physical devices). It does not place the results in a frame, add text or background images, or upload assets to any app store.
 
-## Known issues
+## FAQ
 
-`MissingPluginException(No implementation found for method captureScreenshot on channel plugins.flutter.io/integration_test)`
+_Why doesn't this use Flutter's integration testing system to allow for automated interaction?_
 
-See https://github.com/flutter/flutter/issues/91668. You'll need to open `flutter/packages/integration_test/ios/Classes/IntegrationTestPlugin.m` and change the `registerWithRegistrar` method to the following:
-
-```objective-c
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-    [[IntegrationTestPlugin instance] setupChannels:registrar.messenger];
-}
-```
-
-Yeah, I know. Go thumbs-up the issue.
-
+Flutter's `integration_test` package is, unfortunately, in a state of neglect as far as screenshots are concerned. For screenshots to work on both platforms you have to modify your Flutter installation's objective-c code by hand, and even once it's working there are issues: device trim and cutouts aren't captured, you can only take one screenshot per test on Android, and some of the commands you're supposed to call are not available to the user in public APIs.
 
 ## Development
 
