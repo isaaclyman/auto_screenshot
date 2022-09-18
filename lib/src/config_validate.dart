@@ -49,12 +49,14 @@ Future<void> _validateDevices(List<String> deviceNames) async {
 
   final validIOSDeviceNames =
       (await getInstalledIOSSimulators()).map((device) => device.name);
+  final validAndroidDeviceNames =
+      (await getInstalledAndroidEmulators()).map((device) => device.name);
   final listedIOSDeviceNames = <String>[];
   final listedAndroidDeviceNames = <String>[];
 
   for (var deviceName in deviceNames) {
     final isIOSDevice = validIOSDeviceNames.contains(deviceName);
-    final isAndroidDevice = false;
+    final isAndroidDevice = validAndroidDeviceNames.contains(deviceName);
 
     if (isIOSDevice) {
       listedIOSDeviceNames.add(deviceName);

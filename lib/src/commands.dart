@@ -1,17 +1,41 @@
 import 'dart:io';
 
 import 'package:auto_screenshot/src/exceptions.dart';
+import "package:path/path.dart" as path;
 
 Future<void> runTestOnDevice(
   String testPath,
   String deviceIdentifier,
 ) async {
-  final result =
-      await Process.run("flutter", ["test", testPath, "-d", deviceIdentifier]);
-  if (result.exitCode != 0) {
-    throw TestFailureException("Flutter test runner failed: ${result.stderr}");
+  final file = File(testPath);
+  final type = file.statSync().type;
+  final testFilePaths = <String>[];
+  if (type == FileSystemEntityType.file) {
+    testFilePaths.add(testPath);
+  } else {
+    final dir = Directory(testPath);
+    final files = dir.listSync(recursive: true).where(
+          (entity) =>
+              entity.statSync().type == FileSystemEntityType.file &&
+              entity.path.endsWith('.dart'),
+        );
+    testFilePaths.addAll(files.map((f) => f.path));
   }
-  print(result.stdout ?? '');
+
+  for (var target in testFilePaths) {
+    final result = await Process.run("flutter", [
+      "drive",
+      "--driver=test_driver/integration_test.dart",
+      "--target=$target",
+      "-d",
+      deviceIdentifier
+    ]);
+    if (result.exitCode != 0) {
+      throw TestFailureException(
+          "Flutter test runner failed: [stdout:${result.stdout}] [stderr:${result.stderr}]");
+    }
+    print('Test [${path.basename(target)}] passed.');
+  }
 }
 
 Future<void> assertBinariesAvailable() async {

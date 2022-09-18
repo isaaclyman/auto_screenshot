@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:auto_screenshot/src/commands.dart';
 import 'package:auto_screenshot/src/devices.dart';
 
