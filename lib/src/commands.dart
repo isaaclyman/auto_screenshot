@@ -50,10 +50,10 @@ Future<void> captureScreensOnDevice(
   }
 
   final outputFolder = path.join(config.outputFolder, device.name);
-  await device.loadDeepLink(baseUrl, "");
+  await device.loadDeepLink(baseUrl, "", config.bundleId);
   await Future.delayed(Duration(seconds: 8));
   for (var capturePath in config.paths) {
-    await device.loadDeepLink(baseUrl, capturePath);
+    await device.loadDeepLink(baseUrl, capturePath, config.bundleId);
     await Future.delayed(Duration(seconds: 1));
     await device.captureScreen(
       path.join(outputFolder, '${capturePath.replaceAll('/', '_')}.png'),
@@ -63,16 +63,17 @@ Future<void> captureScreensOnDevice(
   print('Captured ${config.paths.length} screen(s) on [$device].');
 }
 
-Future<void> runToCompletion({
+Future<ProcessResult> runToCompletion({
   required Future<ProcessResult> process,
-  required MessageException Function(String data) onException,
+  required MessageException Function(String data)? onException,
 }) async {
   final result = await process;
-  if (result.exitCode != 0) {
+  if (result.exitCode != 0 && onException != null) {
     throw onException("[stdout:${result.stdout}] [stderr:${result.stderr}]");
   }
 
   if (result.stdout.toString().trim().isNotEmpty) {
     print("[stdout:${result.stdout}]");
   }
+  return result;
 }

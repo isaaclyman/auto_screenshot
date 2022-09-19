@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_screenshot/src/android.dart';
+import 'package:auto_screenshot/src/config.dart';
 import 'package:auto_screenshot/src/exceptions.dart';
 import 'package:auto_screenshot/src/extensions.dart';
 import 'package:auto_screenshot/src/ios.dart';
@@ -52,18 +53,20 @@ class Device {
     }
   }
 
-  Future<void> installApp() async {
+  Future<void> installApp(Map<String, String> bundleId) async {
     if (type == DeviceType.android) {
       await installAndroidApp(
-          this,
-          path.join(
-            'build',
-            'app',
-            'outputs',
-            'apk',
-            'release',
-            'app-release.apk',
-          ));
+        this,
+        path.join(
+          'build',
+          'app',
+          'outputs',
+          'apk',
+          'release',
+          'app-release.apk',
+        ),
+        bundleId[DeviceTypeString.android]!,
+      );
     } else if (type == DeviceType.iOS) {
       await installIOSApp(
           this,
@@ -77,9 +80,11 @@ class Device {
     }
   }
 
-  Future<void> loadDeepLink(String baseUrl, String path) async {
+  Future<void> loadDeepLink(
+      String baseUrl, String path, Map<String, String> bundleId) async {
     if (type == DeviceType.android) {
-      await loadAndroidDeepLink(this, baseUrl.joinUrl(path));
+      await loadAndroidDeepLink(
+          this, baseUrl.joinUrl(path), bundleId[DeviceTypeString.android]!);
     } else if (type == DeviceType.iOS) {
       await loadIOSDeepLink(this, baseUrl.joinUrl(path));
     } else {

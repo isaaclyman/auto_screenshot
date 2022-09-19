@@ -1,5 +1,6 @@
 import 'package:auto_screenshot/src/android.dart';
 import 'package:auto_screenshot/src/commands.dart';
+import 'package:auto_screenshot/src/exceptions.dart';
 import 'package:auto_screenshot/src/ios.dart';
 
 import 'validate.dart';
@@ -16,18 +17,33 @@ void main() async {
     (deviceName) => allSims.firstWhere((sim) => sim.name == deviceName),
   );
 
+  await stopRunningEmulators();
+
+  final errors = <Object>[];
   for (var device in selectedDevices) {
     print('###');
-    print('Booting up [$device]');
-    await device.boot();
-    print('Installing app on [$device]');
-    await device.installApp();
-    print('Capturing screens on [$device]');
-    await captureScreensOnDevice(config, device);
-    print('Sending kill signal to [$device]');
-    device.stop();
+
+    try {
+      print('Booting up [$device]');
+      await device.boot();
+      print('Installing app on [$device]');
+      await device.installApp(config.bundleId);
+      print('Capturing screens on [$device]');
+      await captureScreensOnDevice(config, device);
+      print('Sending kill signal to [$device]');
+      device.stop();
+    } catch (err) {
+      errors.add(err);
+    }
     print('###');
     print('');
+  }
+
+  if (errors.isNotEmpty) {
+    print(
+      '${errors.length} devices out of ${selectedDevices.length} had problems.',
+    );
+    print(AggregateException(errors));
   }
 
   print('Done.');

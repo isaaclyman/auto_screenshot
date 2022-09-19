@@ -16,9 +16,13 @@ You'll need to have the following installed, with the indicated binaries availab
 To install, add `auto_screenshot` to your dev_dependencies in pubspec.yaml.
 (Run `flutter pub get` if your IDE doesn't do it for you.)
 
+Set up your configuration (see below). Run `flutter run` targeting an iOS simulator to generate the necessary iOS app file, then run `flutter build apk` to build the Android APK.
+
+The first time you run auto_screenshot on a target, you'll need to supervise it. The target will ask you for permission to open a deep link in your app. You'll need to click OK.
+
 ## Commands
 
-- `dart run auto_screenshot`: Starts booting up simulators, loading deep links, and collecting screenshots. Make sure you don't have any simulators already running; auto_screenshot will start them as needed and close them when it's finished. Make sure as well that you've built an ipa and an appbundle for your app. auto_screenshot will look for them in the standard output folders.
+- `dart run auto_screenshot`: Starts booting up simulators, loading deep links, and collecting screenshots. Make sure you've built an ipa and an appbundle for your app. auto_screenshot will look for them in the standard output folders.
 - `dart run auto_screenshot:list_devices`: Lists all the valid device names you can use in the auto_screenshot configuration.
 - `dart run auto_screenshot:validate`: Validates your auto_screenshot configuration without running any tests.
 
@@ -67,7 +71,7 @@ WIP...
 
 ## Support
 
-Issues are welcome. Please don't ask me to increase the scope of this project unless you're willing to do the work, file the PRs, and join the maintenance team. auto_screenshot is meant to run on MacOS and capture screenshots from iPhone and Android emulators (not physical devices). It does not place the results in a frame, add text or background images, or upload assets to any app store.
+Issues are welcome. Please don't ask to increase the scope of this project. auto_screenshot is meant to run on MacOS and capture screenshots from iPhone and Android emulators (not physical devices). It does not place the results in a frame, add text or background images, or upload assets to any app store.
 
 ## FAQ
 

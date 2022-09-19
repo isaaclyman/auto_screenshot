@@ -44,7 +44,7 @@ Future<void> captureIOSScreen(Device device, String outputPath) async {
       [
         "simctl",
         "io",
-        "booted",
+        device.id,
         "screenshot",
         fixedOutputPath,
         "--mask",

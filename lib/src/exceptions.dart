@@ -5,7 +5,7 @@ String generateError(Exception e, String? error) {
 
 class AggregateException implements Exception {
   const AggregateException(this.exceptions);
-  final Iterable<Exception> exceptions;
+  final Iterable<Object> exceptions;
 
   @override
   String toString() {
