@@ -1,4 +1,3 @@
-import 'package:auto_screenshot/auto_screenshot.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -9,3 +9,7 @@
 ## 0.0.1-dev.4
 
 - WIP. Capturing screenshots on both iOS and Android.
+
+## 0.0.2
+
+- Ready for use. Works on iOS and Android with some supervision.
