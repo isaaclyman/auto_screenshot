@@ -20,7 +20,7 @@ Future<void Function()> bootAndroidEmulator(Device device) async {
       "-port",
       port.toStringAsFixed(0),
       "-no-boot-anim",
-      "-wipe-data"
+      // "-wipe-data"
     ],
   );
   device.port = port;
@@ -28,7 +28,7 @@ Future<void Function()> bootAndroidEmulator(Device device) async {
 
   final deviceOnline = await Process.run("adb", [
     "-s",
-    "emulator-${device.port!.toStringAsFixed(0)}",
+    device.androidId,
     "wait-for-device",
   ]);
 
@@ -37,7 +37,7 @@ Future<void Function()> bootAndroidEmulator(Device device) async {
         "wait-for-device failed. [stdout:${deviceOnline.stdout}] [stderr:${deviceOnline.stderr}]");
   }
 
-  await Future.delayed(Duration(seconds: 8));
+  await Future.delayed(Duration(seconds: 10));
 
   return () {
     print("kill ${startEmu.pid}");
@@ -64,7 +64,7 @@ Future<void> captureAndroidScreen(Device device, String outputPath) async {
       "adb",
       [
         "-s",
-        "emulator-${device.port!.toStringAsFixed(0)}",
+        device.androidId,
         "exec-out",
         "screencap",
         "-p",
@@ -112,7 +112,7 @@ Future<void> installAndroidApp(
   await runToCompletion(
     process: Process.run("adb", [
       "-s",
-      "emulator-${device.port!.toStringAsFixed(0)}",
+      device.androidId,
       "install",
       "-r",
       "-g",
@@ -139,7 +139,7 @@ Future<void> loadAndroidDeepLink(
   await runToCompletion(
     process: Process.run("adb", [
       "-s",
-      "emulator-${device.port!.toStringAsFixed(0)}",
+      device.androidId,
       "shell",
       "am",
       "start",
@@ -188,19 +188,88 @@ Future<void> loadAndroidData(
   String bundleId,
   Directory seedDirectory,
 ) async {
+  await runToCompletion(
+    process: Process.run("adb", [
+      "-s",
+      device.androidId,
+      "root",
+    ]),
+    onException: (data) => AndroidCommandException(
+      "Couldn't get root permission. $data",
+    ),
+  );
+
   // Data directory: /data/data/com.example.app/databases/
-  // adb push localFilePath remoteDirectory
+  final targetDirectory = path.join("/data", "data", bundleId, "databases");
+  await runToCompletion(
+    process: Process.run("adb", [
+      "-s",
+      device.androidId,
+      "exec-out",
+      "mkdir",
+      "-p",
+      targetDirectory,
+    ]),
+    onException: (data) => AndroidCommandException(
+      "Couldn't create databases folder. $data",
+    ),
+  );
+  await runToCompletion(
+    process: Process.run("adb", [
+      "-s",
+      device.androidId,
+      "exec-out",
+      "chmod",
+      "777",
+      targetDirectory,
+    ]),
+    onException: (data) => AndroidCommandException(
+      "Couldn't set permissions on target folder. $data",
+    ),
+  );
+
   final seedFiles = seedDirectory.listSync(recursive: true);
+  // final tempDir = path.join("/data", "tmp");
+  // await runToCompletion(process:
+  //   Process.run("adb", [
+  //     "-s",
+  //     device.androidId,
+  //     "exec-out",
+  //     "mkdir",
+  //     "-p",
+  //     tempDir,
+  //   ])
+  // , onException: Andr)
+
   await Future.forEach(seedFiles, (file) async {
+    // adb push localFilePath remoteDirectory
     await runToCompletion(
       process: Process.run("adb", [
+        "-s",
+        device.androidId,
         "push",
         file.absolute.path,
-        path.join("data", "data", bundleId, "databases"),
+        path.join(targetDirectory, path.basename(file.path)),
       ]),
       onException: (data) => AndroidCommandException(
-        "Couldn't copy file ${file.path}",
+        "Couldn't copy file ${file.path} to device. $data",
       ),
     );
+
+    // await runToCompletion(
+    //   process: Process.run("adb", [
+    //     "-s",
+    //     device.androidId,
+    //     "exec-out",
+    //     "run-as",
+    //     bundleId,
+    //     "cp",
+    //     path.join(tempDir, path.basename(file.path)),
+    //     path.join(targetDirectory, path.basename(file.path)),
+    //   ]),
+    //   onException: (data) => AndroidCommandException(
+    //     "Couldn't copy file to app data. $data",
+    //   ),
+    // );
   });
 }

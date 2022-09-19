@@ -17,6 +17,7 @@ enum DeviceType {
 
 class Device {
   final String id;
+  String get androidId => 'emulator-$port';
   final String name;
   final DeviceType type;
   int? port;
