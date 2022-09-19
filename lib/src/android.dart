@@ -182,3 +182,25 @@ Future<void> stopRunningEmulators() async {
     );
   }
 }
+
+Future<void> loadAndroidData(
+  Device device,
+  String bundleId,
+  Directory seedDirectory,
+) async {
+  // Data directory: /data/data/com.example.app/databases/
+  // adb push localFilePath remoteDirectory
+  final seedFiles = seedDirectory.listSync(recursive: true);
+  await Future.forEach(seedFiles, (file) async {
+    await runToCompletion(
+      process: Process.run("adb", [
+        "push",
+        file.absolute.path,
+        path.join("data", "data", bundleId, "databases"),
+      ]),
+      onException: (data) => AndroidCommandException(
+        "Couldn't copy file ${file.path}",
+      ),
+    );
+  });
+}

@@ -35,12 +35,16 @@ class AutoScreenshotConfig {
   @JsonKey(name: 'output_folder')
   final String outputFolder;
 
+  @JsonKey(name: 'sqlite_folder')
+  final String? sqliteFolder;
+
   AutoScreenshotConfig({
     required this.devices,
     required this.baseUrl,
     required this.paths,
     this.outputFolder = "auto_screenshot",
     required this.bundleId,
+    this.sqliteFolder,
   });
 
   factory AutoScreenshotConfig.fromJson(Map json) =>

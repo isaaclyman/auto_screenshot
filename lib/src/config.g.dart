@@ -17,7 +17,8 @@ AutoScreenshotConfig _$AutoScreenshotConfigFromJson(Map json) => $checkedCreate(
             'devices',
             'base_url',
             'screenshot',
-            'output_folder'
+            'output_folder',
+            'sqlite_folder'
           ],
         );
         final val = AutoScreenshotConfig(
@@ -31,6 +32,7 @@ AutoScreenshotConfig _$AutoScreenshotConfigFromJson(Map json) => $checkedCreate(
               'output_folder', (v) => v as String? ?? "auto_screenshot"),
           bundleId: $checkedConvert(
               'bundle_id', (v) => Map<String, String>.from(v as Map)),
+          sqliteFolder: $checkedConvert('sqlite_folder', (v) => v as String?),
         );
         return val;
       },
@@ -38,7 +40,8 @@ AutoScreenshotConfig _$AutoScreenshotConfigFromJson(Map json) => $checkedCreate(
         'baseUrl': 'base_url',
         'paths': 'screenshot',
         'outputFolder': 'output_folder',
-        'bundleId': 'bundle_id'
+        'bundleId': 'bundle_id',
+        'sqliteFolder': 'sqlite_folder'
       },
     );
 
@@ -50,4 +53,5 @@ Map<String, dynamic> _$AutoScreenshotConfigToJson(
       'base_url': instance.baseUrl,
       'screenshot': instance.paths,
       'output_folder': instance.outputFolder,
+      'sqlite_folder': instance.sqliteFolder,
     };

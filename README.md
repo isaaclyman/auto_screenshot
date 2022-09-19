@@ -2,7 +2,7 @@
 It's a good choice for your app **if all the pages you want to screenshot are accessible by
 deep-link with no user interaction required.**
 
-Seed data is supported.
+Seed data is supported if you use a sqlite database.
 
 ## Getting started
 
@@ -57,13 +57,14 @@ If you want screenshots to be written to `<project root>/auto_screenshot`, that'
 
 All configuration fields:
 
-- `bundle_id` - (required) your app's bundle ID, like `com.{domain}.{appname}`. This should match the bundle ID your app compiles to for both iOS and Android.
+- `bundle_id` - (required) your app's bundle ID, like `com.{domain}.{appname}`. `android` and `iOS` fields are required. This should match the bundle ID your app compiles to for both iOS and Android.
 - `devices` - (required) an array of device names. These must be exact and not contain any typos. You can get
   a list of valid device names by running `dart run auto_screenshot:list_devices`. This assumes you've already installed/created the simulators you want to use, though they shouldn't be running while you're using auto_screenshot.
-- `baseUrl` - (required) the base URL for your deep links. `android` and `iOS` fields are supported. Your app must be configured for deep linking; see https://docs.flutter.dev/development/ui/navigation/deep-linking.
+- `baseUrl` - (required) the base URL for your deep links. `android` and `iOS` fields are required. Your app must be configured for deep linking; see https://docs.flutter.dev/development/ui/navigation/deep-linking.
 - `screenshot` - (required) the relative URL of each page you want to screenshot.
 - `output_folder` - (optional) path from the project root to the desired screenshot output folder. Defaults
   to `auto_screenshot`.
+- `sqlite_folder` - (optional) path from the project root to a folder containing any sqlite files you want to be placed in the data directory for your app on each simulator. If you use sqflite, for example, you can seed a .db file.
 
 ## Usage
 

@@ -28,6 +28,12 @@ void main() async {
       await device.boot();
       print('Installing app on [$device]');
       await device.installApp(config.bundleId);
+
+      if (config.sqliteFolder != null) {
+        print('Loading seed data on [$device]');
+        await device.loadSeedFiles(config.bundleId, config.sqliteFolder!);
+      }
+
       print('Capturing screens on [$device]');
       await captureScreensOnDevice(config, device);
       print('Sending kill signal to [$device]');

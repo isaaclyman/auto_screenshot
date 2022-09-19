@@ -92,6 +92,20 @@ class Device {
     }
   }
 
+  Future<void> loadSeedFiles(
+      Map<String, String> bundleId, String sqliteFolder) async {
+    if (type == DeviceType.android) {
+      await loadAndroidData(
+          this, bundleId[DeviceTypeString.android]!, Directory(sqliteFolder));
+    } else if (type == DeviceType.iOS) {
+      await loadIOSData(
+          this, bundleId[DeviceTypeString.ios]!, Directory(sqliteFolder));
+    } else {
+      throw InvalidDeviceException(
+          "loadSeedFiles: Unsupported device [$this].");
+    }
+  }
+
   void stop() async {
     _stopEmulator?.call();
   }

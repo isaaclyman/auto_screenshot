@@ -120,3 +120,28 @@ Future<void> loadIOSDeepLink(Device device, String url) async {
         IOSCommandException("Failed to load deep link. $data"),
   );
 }
+
+Future<void> loadIOSData(
+  Device device,
+  String bundleId,
+  Directory seedDirectory,
+) async {
+  // xcrun simctl get_app_container booted com.isaaclyman.sootly data
+  final appContainerResult = await runToCompletion(
+    process: Process.run("xcrun", [
+      "simctl",
+      "get_app_container",
+      device.id,
+      bundleId,
+      "data",
+    ]),
+    onException: (data) => IOSCommandException(
+      "Failed to get data directory. $data",
+    ),
+  );
+  final docsPath =
+      path.join(appContainerResult.stdout.toString().trim(), "Documents");
+  seedDirectory.listSync(recursive: true).forEach((file) {
+    File(file.path).copySync(path.join(docsPath, path.basename(file.path)));
+  });
+}
