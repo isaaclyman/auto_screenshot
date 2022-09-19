@@ -66,13 +66,14 @@ Future<void> captureScreensOnDevice(
 Future<ProcessResult> runToCompletion({
   required Future<ProcessResult> process,
   required MessageException Function(String data)? onException,
+  bool printStdout = true,
 }) async {
   final result = await process;
   if (result.exitCode != 0 && onException != null) {
     throw onException("[stdout:${result.stdout}] [stderr:${result.stderr}]");
   }
 
-  if (result.stdout.toString().trim().isNotEmpty) {
+  if (printStdout && result.stdout.toString().trim().isNotEmpty) {
     print("[stdout:${result.stdout}]");
   }
   return result;

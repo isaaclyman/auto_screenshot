@@ -59,18 +59,25 @@ Future<void> captureAndroidScreen(Device device, String outputPath) async {
   dir.createSync(recursive: true);
 
   // adb exec-out screencap -p > screen.png
-  await runToCompletion(
-    process: Process.run("adb", [
-      "-s",
-      "emulator-${device.port!.toStringAsFixed(0)}",
-      "exec-out",
-      "screencap",
-      "-p",
-      fixedOutputPath,
-    ]),
+  final result = await runToCompletion(
+    process: Process.run(
+      "adb",
+      [
+        "-s",
+        "emulator-${device.port!.toStringAsFixed(0)}",
+        "exec-out",
+        "screencap",
+        "-p",
+      ],
+      stdoutEncoding: null,
+    ),
     onException: (data) =>
         AndroidCommandException("Failed to capture screen. $data"),
+    printStdout: false,
   );
+
+  final png = result.stdout as List<int>;
+  await File(fixedOutputPath).writeAsBytes(png);
 }
 
 Future<List<Device>> getInstalledAndroidEmulators() async {
