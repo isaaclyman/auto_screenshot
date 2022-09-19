@@ -229,17 +229,6 @@ Future<void> loadAndroidData(
   );
 
   final seedFiles = seedDirectory.listSync(recursive: true);
-  // final tempDir = path.join("/data", "tmp");
-  // await runToCompletion(process:
-  //   Process.run("adb", [
-  //     "-s",
-  //     device.androidId,
-  //     "exec-out",
-  //     "mkdir",
-  //     "-p",
-  //     tempDir,
-  //   ])
-  // , onException: Andr)
 
   await Future.forEach(seedFiles, (file) async {
     // adb push localFilePath remoteDirectory
@@ -255,21 +244,5 @@ Future<void> loadAndroidData(
         "Couldn't copy file ${file.path} to device. $data",
       ),
     );
-
-    // await runToCompletion(
-    //   process: Process.run("adb", [
-    //     "-s",
-    //     device.androidId,
-    //     "exec-out",
-    //     "run-as",
-    //     bundleId,
-    //     "cp",
-    //     path.join(tempDir, path.basename(file.path)),
-    //     path.join(targetDirectory, path.basename(file.path)),
-    //   ]),
-    //   onException: (data) => AndroidCommandException(
-    //     "Couldn't copy file to app data. $data",
-    //   ),
-    // );
   });
 }
