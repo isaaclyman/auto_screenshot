@@ -31,7 +31,7 @@ Future<void Function()> bootIOSSimulator(Device device) async {
 
 Future<void> captureIOSScreen(Device device, String outputPath) async {
   final outputFile = File(outputPath);
-  final fixedOutputPath = outputFile.absolute.path.replaceAll(" ", "_");
+  final fixedOutputPath = outputFile.absolute.path;
   print('outputPath: $fixedOutputPath');
 
   final dir = Directory(path.dirname(fixedOutputPath));

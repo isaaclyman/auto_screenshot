@@ -49,14 +49,20 @@ Future<void> captureScreensOnDevice(
     throw InvalidDeviceException('Invalid device: [$device]');
   }
 
-  final outputFolder = path.join(config.outputFolder, device.name);
+  final nonAlphaNumericRx = RegExp(r'[^\w]');
+  final outputFolder = path.join(
+      config.outputFolder, device.name.replaceAll(nonAlphaNumericRx, '_'));
   await device.loadDeepLink(baseUrl, "", config.bundleId);
   await Future.delayed(Duration(seconds: 8));
   for (var capturePath in config.paths) {
     await device.loadDeepLink(baseUrl, capturePath, config.bundleId);
     await Future.delayed(Duration(seconds: 1));
+
     await device.captureScreen(
-      path.join(outputFolder, '${capturePath.replaceAll('/', '_')}.png'),
+      path.join(
+        outputFolder,
+        '${capturePath.replaceAll(nonAlphaNumericRx, '_')}.png',
+      ),
     );
   }
 
