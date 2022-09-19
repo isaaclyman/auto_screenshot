@@ -5,3 +5,7 @@
 ## 0.0.1-dev.3
 
 - WIP. Changed course to get something that works, still not tested on Android.
+
+## 0.0.1-dev.4
+
+- WIP. Capturing screenshots on both iOS and Android.

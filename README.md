@@ -67,7 +67,7 @@ All configuration fields:
 
 ## Usage
 
-WIP...
+No public APIs are exported. Set up your configuration and run the exported binaries on the command line.
 
 ## Support
 
